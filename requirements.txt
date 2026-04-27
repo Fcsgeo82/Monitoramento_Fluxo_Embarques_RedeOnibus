@@ -1,0 +1,21 @@
+# R Packages Dependencies
+# This file lists the R packages required for this project.
+# You can install them in R using: install.packages(c("..."))
+
+data.table
+sf
+dplyr
+lubridate
+h3jsr
+googlesheets4
+bigrquery
+basedosdados
+glue
+purrr
+progress
+shiny
+leaflet
+leaflet.extras
+ggplot2
+tidytransit
+DT
