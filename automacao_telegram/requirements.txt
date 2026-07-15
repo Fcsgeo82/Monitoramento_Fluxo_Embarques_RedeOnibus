@@ -1,0 +1,71 @@
+# =============================================================================
+# requirements.txt — Dependências R do Projeto
+# Monitoramento de Fluxo de Embarques — Rede de Ônibus (SMTR/RJ)
+# =============================================================================
+# Formato: um pacote por linha.
+# Para instalar todos de uma vez, execute no console R:
+#
+#   pkgs <- readLines("requirements.txt")
+#   pkgs <- pkgs[!grepl("^#|^\\s*$", pkgs)]
+#   install.packages(pkgs)
+#
+# Pacotes de fontes especiais (GitHub/CRAN não-padrão) estão sinalizados.
+# =============================================================================
+
+
+# -----------------------------------------------------------------------------
+# EXTRAÇÃO DE DADOS (1. Dados_embarques_GPS.R)
+# -----------------------------------------------------------------------------
+data.table
+sf
+dplyr
+lubridate
+h3jsr
+googlesheets4
+bigrquery
+# basedosdados: instalar via GitHub — remotes::install_github("basedosdados/basedosdados-r")
+basedosdados
+glue
+purrr
+progress
+
+
+# -----------------------------------------------------------------------------
+# APLICAÇÃO SHINY — VISUALIZAÇÃO INTERATIVA (2.1. Mapa_fluxo_embarques_v2.R)
+# -----------------------------------------------------------------------------
+shiny
+leaflet
+leaflet.extras
+ggplot2
+tidytransit
+DT
+
+
+# -----------------------------------------------------------------------------
+# AUTOMAÇÃO E ENVIO TELEGRAM (automacao_telegram/)
+# -----------------------------------------------------------------------------
+
+# Envio via API do Telegram
+httr2
+curl
+
+# Captura de mapas leaflet como imagem estática
+# webshot2 requer Chrome/Chromium instalado.
+# Após instalar o pacote, execute: webshot2::install_chromote()
+webshot2
+htmlwidgets
+
+# Relatório tabular PDF
+# gt::gtsave() também usa Chrome via webshot2
+gt
+scales
+tidyr
+
+
+# -----------------------------------------------------------------------------
+# UTILITÁRIOS GERAIS (usados em múltiplos scripts)
+# -----------------------------------------------------------------------------
+# glue     (já listado acima)
+# dplyr    (já listado acima)
+# lubridate (já listado acima)
+# sf       (já listado acima)

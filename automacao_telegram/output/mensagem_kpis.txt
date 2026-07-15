@@ -1,0 +1,27 @@
+📊 *Relatório Operacional da Rede — 14/07/2026*
+
+🚍 *Resumo Geral*
+  • Total de embarques: 1.971.229
+  • Linhas em operação: 431
+  • Partidas observadas: 42.034
+
+👥 *Por tipo de usuário*
+  • Débito: 863.421 (43.8%)
+  • Gratuidade: 405.649 (20.6%)
+  • Integração: 344.438 (17.5%)
+  • Integração gratuidade: 147.730 (7.5%)
+  • Pagante: 144.365 (7.3%)
+  • Débito PIX a bordo:  34.525 (1.8%)
+  • Gratuidade acompanhante:  30.689 (1.6%)
+  • Débito EMV emissor externo:     222 (0%)
+  • Botoeira:     184 (0%)
+  • Gratuidade operador estudante:       2 (0%)
+  • Gratuidade operador pcd:       2 (0%)
+  • Gratuidade operador sênior:       2 (0%)
+
+⏰ *Embarques por faixa horária*
+  • Entrepico (09–16h): 813.602
+  • Madrugada (00–05h): 161.588
+  • Noturno (20–23h): 145.076
+  • Pico Manhã (06–08h): 458.017
+  • Pico Tarde (17–19h): 392.946

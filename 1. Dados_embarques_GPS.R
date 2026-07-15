@@ -15,8 +15,13 @@ library(glue)
 library(purrr)
 
 # 📌 Configurações e Autenticação
+#options(bigrquery.quiet = TRUE)
+bq_auth(path = "C:/R_SMTR/rj-smtr-felipe-coriolano-siqueira.json")
+#basedosdados::set_billing_id("rj-smtr")
+
+# O bigrquery e o basedosdados procurarão automaticamente pela 
+# variável GOOGLE_APPLICATION_CREDENTIALS no sistema.
 options(bigrquery.quiet = TRUE)
-bq_auth(path = "C:/R_SMTR/rj-smtr-felipe-coriolano-siqueira.json", cache = FALSE)
 basedosdados::set_billing_id("rj-smtr")
 
 # 📌 Definição do Período de Extração
@@ -24,12 +29,16 @@ data_inicio <- as.Date("2026-02-24")
 data_fim    <- as.Date("2026-02-24")
 datas <- seq(data_inicio, data_fim, by = "day")
 
-# 📌 Planilha de tecnologias (Cadastro Auxiliar)
+# data_inicio <- Sys.Date() -1
+# data_fim    <- Sys.Date() -1
+# datas <- seq(data_inicio, data_fim, by = "day")
+
+# 📌 Planilha de tecnologias (Cadastro Auxiliar - Versão Local)
 tecnologia <- tryCatch({
-  read_sheet("1n79LCQfCVY392b5wwvXZZfmcIUYFwzKb7R89G__PgYE")
+  read.csv("automacao_telegram/capacidade_tecnologia.csv")
 }, error = function(e) {
-  message("❌ Erro ao carregar planilha de tecnologias")
-  stop("Planilha essencial")
+  message("❌ Erro ao carregar arquivo local de tecnologias")
+  stop("Arquivo tecnologia_local.csv não encontrado.")
 })
 
 # 📌 Função de Processamento por Dia
@@ -62,7 +71,10 @@ processar_dia <- function(data, max_tentativas = 3, delay_segundos = 5) {
       
       gps <- basedosdados::read_sql(q_gps) %>%
         rename(data_hora = timestamp_gps) %>%
-        mutate(id_veiculo = substr(id_veiculo, 2, 6)) %>%
+        mutate(
+          id_veiculo = substr(id_veiculo, 2, 6),
+          data_hora = as.POSIXct(data_hora)
+        ) %>%
         as.data.table()
       
       trip <- basedosdados::read_sql(q_trip) %>%
@@ -77,11 +89,15 @@ processar_dia <- function(data, max_tentativas = 3, delay_segundos = 5) {
         left_join(veiculos_ref, by = "id_validador") %>%
         filter(!is.na(id_veiculo)) %>%
         select(id_veiculo, data_hora = datetime_transacao) %>%
-        mutate(tipo_usuario = "Pagante")
+        mutate(
+          tipo_usuario = "Pagante",
+          data_hora = as.POSIXct(data_hora)
+        )
       
       # JAE: Mantemos o tipo original vindo da transação
       bilhetagem_jae <- registros_jae %>%
-        select(id_veiculo, data_hora = datetime_transacao, tipo_usuario = tipo_transacao)
+        select(id_veiculo, data_hora = datetime_transacao, tipo_usuario = tipo_transacao) %>%
+        mutate(data_hora = as.POSIXct(data_hora))
       
       bilhetagem_total <- bind_rows(bilhetagem_rio, bilhetagem_jae) %>% as.data.table()
       
