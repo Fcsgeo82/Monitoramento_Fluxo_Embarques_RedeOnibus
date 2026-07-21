@@ -71,6 +71,6 @@ while (TRUE) {
     Sys.sleep(3605)
   } else {
     # Loop de espera (checa a cada 60 segundos)
-    Sys.sleep(3600)
+    Sys.sleep(60)
   }
 }

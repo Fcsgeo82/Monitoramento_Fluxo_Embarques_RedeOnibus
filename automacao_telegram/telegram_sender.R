@@ -64,21 +64,35 @@ telegram_send_document <- function(token, chat_id, caminho_arquivo, legenda = ""
 
 # -----------------------------------------------------------------------------
 # enviar_relatorio_mvp()
-# Wrapper para o MVP: envia mensagem de KPIs + PDF tabular da rede.
+# Wrapper para o MVP: envia mensagem de KPIs (2 blocos) + PDF tabular da rede.
 # -----------------------------------------------------------------------------
 enviar_relatorio_mvp <- function(token, chat_id, data_ref = Sys.Date() - 1) {
 
   data_ref_fmt <- format(data_ref, "%d/%m/%Y")
 
-  # 1. Mensagem de KPIs
-  caminho_kpis <- file.path(CAMINHO_OUTPUT, "mensagem_kpis.txt")
-  if (!file.exists(caminho_kpis)) stop("mensagem_kpis.txt não encontrado.")
+  # 1. Mensagem de KPIs - Bloco 1 (Resumo Executivo)
+  caminho_kpis_bloco1 <- file.path(CAMINHO_OUTPUT, "mensagem_kpis_bloco1.txt")
+  if (!file.exists(caminho_kpis_bloco1)) {
+    # Fallback para arquivo único antigo
+    caminho_kpis_bloco1 <- file.path(CAMINHO_OUTPUT, "mensagem_kpis.txt")
+  }
+  if (!file.exists(caminho_kpis_bloco1)) stop("mensagem_kpis_bloco1.txt não encontrado.")
 
-  kpis <- readLines(caminho_kpis, warn = FALSE) |> paste(collapse = "\n")
-  message("📨 Enviando mensagem de KPIs...")
-  telegram_send_text(token, chat_id, kpis)
+  kpis_bloco1 <- readLines(caminho_kpis_bloco1, warn = FALSE) |> paste(collapse = "\n")
+  message("📨 Enviando KPIs - Bloco 1 (Resumo Executivo)...")
+  telegram_send_text(token, chat_id, kpis_bloco1)
 
-  # 2. PDF tabular da rede
+  # 2. Mensagem de KPIs - Bloco 2 (Detalhamento Operacional)
+  caminho_kpis_bloco2 <- file.path(CAMINHO_OUTPUT, "mensagem_kpis_bloco2.txt")
+  if (file.exists(caminho_kpis_bloco2)) {
+    kpis_bloco2 <- readLines(caminho_kpis_bloco2, warn = FALSE) |> paste(collapse = "\n")
+    message("📨 Enviando KPIs - Bloco 2 (Detalhamento Operacional)...")
+    telegram_send_text(token, chat_id, kpis_bloco2)
+  } else {
+    message("⚠️ Bloco 2 não encontrado, pulando...")
+  }
+
+  # 3. PDF tabular da rede
   caminho_pdf <- file.path(CAMINHO_OUTPUT, glue("relatorio_rede_{data_ref}.pdf"))
   if (!file.exists(caminho_pdf)) stop(glue("PDF não encontrado: {caminho_pdf}"))
 

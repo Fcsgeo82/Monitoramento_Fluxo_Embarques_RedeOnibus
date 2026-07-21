@@ -1,0 +1,57 @@
+📊 *Relatório Operacional da Rede — 20/07/2026*
+
+🚍 *Resumo Geral*
+  • Total de embarques: 2.337.960
+  • Linhas em operação: 429
+  • Partidas observadas: 41.011
+
+🏢 *Por Consórcio*
+  • TRANSCARIOCA: 850.123 embarques (36.4%) | 100 linhas (23.3%) | 12.450 partidas (30.4%)
+  • INTERNORTE: 620.445 embarques (26.5%) | 120 linhas (28.0%) | 10.200 partidas (24.9%)
+  • INTERSUL: 580.780 embarques (24.8%) | 100 linhas (23.3%) | 9.800 partidas (23.9%)
+  • SANTACRUZ: 286.612 embarques (12.3%) | 109 linhas (25.4%) | 8.561 partidas (20.8%)
+
+⏱️ *Headway médio por Consórcio (picos + entrepico)*
+  • SANTACRUZ: 8.2 min
+  • INTERSUL: 9.5 min
+  • TRANSCARIOCA: 10.1 min
+  • INTERNORTE: 11.3 min
+
+👥 *Por tipo de usuário*
+  • Débito: 851.590 (36.4%)
+  • Gratuidade: 550.644 (23.6%)
+  • Integração: 360.805 (15.4%)
+  • Pagante: 344.011 (14.7%)
+  • Integração gratuidade: 193.713 (8.3%)
+  • Gratuidade acompanhante: 37.105 (1.6%)
+  • Botoeira: 67 (0%)
+  • Débito EMV: 13 (0%)
+  • Integração EMV: 6 (0%)
+  • Gratuidade operador sênior: 3 (0%)
+  • Gratuidade operador estudante: 2 (0%)
+  • Gratuidade operador pcd: 1 (0%)
+
+⏰ *Embarques por faixa horária*
+  • Entrepico (09–15h): 704.046
+  • Madrugada (00–05h): 60.844
+  • Noturno (19–24h): 307.113
+  • Pico Manhã (05–09h): 650.354
+  • Pico Tarde (15–19h): 615.603
+
+📈 *Faixa de maior movimento*: Entrepico (09–15h)
+🔗 *Taxa de integração*: 23.7%
+📍 *Cobertura GPS*: 99.8%
+
+⏱️ *Headway médio por faixa (rede)*
+  • Madrugada (00–05h): 15.2 min
+  • Pico Manhã (05–09h): 7.8 min
+  • Entrepico (09–15h): 11.5 min
+  • Pico Tarde (15–19h): 8.3 min
+  • Noturno (19–24h): 12.1 min
+
+🏆 *Top 5 Linhas × Sentido (volume)*
+  • 478 (I): 15.432
+  • 550 (V): 14.203
+  • 103 (I): 13.876
+  • 232 (V): 12.445
+  • 545 (I): 11.987

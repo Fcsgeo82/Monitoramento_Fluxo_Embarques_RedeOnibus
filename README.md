@@ -44,7 +44,15 @@ O pipeline realiza a extração de dados georreferenciados (bilhetagem JAE, RioC
 *   Chromium/Chrome (necessário para renderização de PDFs via `webshot2`)
 
 ### Configuração de Autenticação (Google Cloud)
-Para que a extração de dados funcione corretamente, utilize um arquivo de conta de serviço (Service Account JSON). O caminho deve estar configurado ou ser lido pelo script de extração.
+A autenticação por arquivo JSON foi removida para maior segurança e praticidade, utilizando agora o navegador.
+
+#### BigQuery e Google Cloud
+Execute o comando abaixo para gerar suas credenciais locais (ADC):
+
+```powershell
+gcloud auth application-default login
+```
+Isso abrirá seu navegador para realizar o login e salvará o arquivo de credenciais automaticamente no seu sistema.
 
 ### Pacotes R Principais
 ```r

@@ -35,20 +35,20 @@ CAMINHO_SCRIPT_1 <- "C:/github_repositories/Monitoramento_Fluxo_Embarques_RedeOn
 # Lista nomeada: cada elemento é um vetor c(hora_inicio, hora_fim) — fim exclusivo.
 # -----------------------------------------------------------------------------
 FAIXAS_HORARIAS <- list(
-  madrugada  = c( 0,  6),
-  pico_manha = c( 6,  9),
-  entrepico  = c( 9, 17),
-  pico_tarde = c(17, 20),
-  noturno    = c(20, 24)
+  madrugada  = c( 0,  5),
+  pico_manha = c( 5,  9),
+  entrepico  = c( 9, 15),
+  pico_tarde = c(15, 19),
+  noturno    = c(19, 24)
 )
 
 # Labels legíveis para cada faixa (usados no PDF e na mensagem)
 LABELS_FAIXAS <- c(
   madrugada  = "Madrugada (00–05h)",
-  pico_manha = "Pico Manhã (06–08h)",
-  entrepico  = "Entrepico (09–16h)",
-  pico_tarde = "Pico Tarde (17–19h)",
-  noturno    = "Noturno (20–23h)"
+  pico_manha = "Pico Manhã (05–09h)",
+  entrepico  = "Entrepico (09–15h)",
+  pico_tarde = "Pico Tarde (15–19h)",
+  noturno    = "Noturno (19–24h)"
 )
 
 # Faixas para as quais calcular headway médio na tabela PDF

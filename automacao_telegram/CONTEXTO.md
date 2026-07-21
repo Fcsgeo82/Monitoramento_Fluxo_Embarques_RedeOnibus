@@ -42,11 +42,11 @@ Todos os arquivos novos vivem em `automacao_telegram/` — os scripts originais 
 
 | Código | Período |
 |--------|---------|
-| `madrugada` | 00h – 05h59 |
-| `pico_manha` | 06h – 08h59 |
-| `entrepico` | 09h – 16h59 |
-| `pico_tarde` | 17h – 19h59 |
-| `noturno` | 20h – 23h59 |
+| `madrugada` | 00h – 05h |
+| `pico_manha` | 05h – 09h |
+| `entrepico` | 09h – 15h |
+| `pico_tarde` | 15h – 19h |
+| `noturno` | 19h – 24h |
 
 Headway médio é calculado apenas para `pico_manha`, `entrepico` e `pico_tarde`.
 
