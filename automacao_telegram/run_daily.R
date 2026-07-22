@@ -69,7 +69,7 @@ tryCatch({
     stop("Extração retornou zero registros.")
   }
 
-  cat(sprintf("    ✅ %s embarques extraídos.\n\n", format(nrow(registros_final), big.mark = ".")))
+  cat(sprintf("    ✅ %s embarques extraídos.\n\n", fmt_num(nrow(registros_final))))
 
 }, error = function(e) {
   msg <- sprintf("❌ *Falha na extração* (%s):\n`%s`", data_ref_fmt, e$message)

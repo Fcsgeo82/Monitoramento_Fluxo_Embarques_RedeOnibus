@@ -60,3 +60,36 @@ FAIXAS_HEADWAY <- c("pico_manha", "entrepico", "pico_tarde")
 
 # Threshold de headway (min) acima do qual a célula é destacada em vermelho
 HEADWAY_ALERTA_MIN <- 30
+
+# -----------------------------------------------------------------------------
+# UTILITÁRIOS
+# -----------------------------------------------------------------------------
+
+# Formatação numérica BR (milhar='.', decimal=',') sem aviso de locale
+fmt_num <- function(x) {
+  # Tratar vetores
+  if (length(x) > 1) return(vapply(x, fmt_num, character(1)))
+
+  # Converte para string sem notação científica, preservando decimais
+  x_chr <- format(x, scientific = FALSE, trim = TRUE, digits = 15)
+
+  # Extrair sinal se negativo
+  sinal <- if (startsWith(x_chr, "-")) "-" else ""
+  x_chr <- sub("^-", "", x_chr)
+
+  # Divide parte inteira e decimal pelo ponto decimal (fixed=TRUE = literal '.')
+  parts <- strsplit(x_chr, ".", fixed = TRUE)[[1]]
+  int_part <- parts[1]
+  dec_part <- if (length(parts) > 1) parts[2] else ""
+
+  # Adicionar separador de milhar '.' na parte inteira (manual, sem formatC/prettyNum)
+  # Regex: insere '.' antes de cada grupo de 3 dígitos a partir do final
+  int_formatted <- gsub("(\\d)(?=(\\d{3})+$)", "\\1.", int_part, perl = TRUE)
+
+  # Recombinar com sinal e vírgula decimal se houver parte decimal
+  if (nchar(dec_part) > 0 && dec_part != "0") {
+    paste0(sinal, int_formatted, ",", dec_part)
+  } else {
+    paste0(sinal, int_formatted)
+  }
+}

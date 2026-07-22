@@ -1,0 +1,32 @@
+📊 *Detalhamento Operacional — 21/07/2026*
+
+⏱️ *Headway médio por faixa (rede)*
+  • Entrepico (09–15h): 0 min
+  • Madrugada (00–05h): 0.1 min
+  • Noturno (19–24h): 0 min
+  • Pico Manhã (05–09h): 0 min
+  • Pico Tarde (15–19h): 0 min
+
+📊 *Evolução horária do Headway (5h–22h)*
+  ▁▁▁▁▁▁▁▁▁▁▁▁▁▂▂▂▃█
+  5h ▁ = 12,4min  →  22h █ = 80,4min
+
+🏆 *Top 5 Linhas × Sentido (volume)*
+  • 371 (V): 15.348
+  • 371 (I): 13.940
+  • 629 (I): 12.402
+  • 606 (V): 12.390
+  • 606 (I): 12.197
+
+⚠️ *Linhas com Headway > 30 min (picos)*
+593 linha(s) com headway > 30min (74%)
+
+🚫 *Linhas sem partida observada*
+Nenhuma
+
+🔻 *Top 5 Linhas com Headway Crítico (>20min)*
+  • SV921 (V): HW médio 179.7min | 5 partidas
+  • 311 (V): HW médio 168min | 5 partidas
+  • SR300 (V): HW médio 165.3min | 5 partidas
+  • SR386 (I): HW médio 123.5min | 7 partidas
+  • 338 (I): HW médio 116min | 7 partidas

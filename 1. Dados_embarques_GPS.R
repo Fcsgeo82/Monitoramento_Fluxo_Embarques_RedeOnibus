@@ -115,8 +115,10 @@ processar_dia <- function(data, max_tentativas = 3, delay_segundos = 5) {
                                 longitude)]
       
       # 5. Join Final com Viagens (Linha e Sentido)
+      # relationship = "many-to-many" silencia aviso: um veículo pode ter múltiplas viagens no dia
+      # e um embarque pode matchar múltiplas viagens (filtrado depois por horario_embarque)
       registros_dia_final <- embarques_coords %>%
-        left_join(trip, by = "id_veiculo") %>%
+        left_join(trip, by = "id_veiculo", relationship = "many-to-many") %>%
         filter(horario_embarque > datetime_partida_adj & horario_embarque <= datetime_chegada) %>%
         select(
           id_veiculo,

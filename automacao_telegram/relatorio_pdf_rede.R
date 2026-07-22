@@ -41,10 +41,13 @@ dados_raw <- readRDS(caminho_rds)
 # -----------------------------------------------------------------------------
 # 0b. Carregar mapeamento linha → consórcio
 # -----------------------------------------------------------------------------
-# O script roda a partir da pasta automacao_telegram/ (via run_daily.R)
-caminho_consorcio <- "config_consorcio.csv"
+# O script roda a partir da raiz do projeto (via run_daily.R setwd)
+caminho_consorcio <- file.path("automacao_telegram", "config_consorcio.csv")
 if (file.exists(caminho_consorcio)) {
-  mapa_consorcio <- readr::read_csv(caminho_consorcio, show_col_types = FALSE, lazy = FALSE)
+  # Forçar coluna 'linha' como character para compatibilidade com dados do RDS
+  mapa_consorcio <- readr::read_csv(caminho_consorcio, show_col_types = FALSE, lazy = FALSE,
+                                     col_types = readr::cols(linha = readr::col_character(),
+                                                             consorcio = readr::col_character()))
   names(mapa_consorcio) <- c("linha", "consorcio")
   message(glue("📋 Mapeamento de consórcio carregado: {nrow(mapa_consorcio)} linhas"))
 } else {
@@ -60,6 +63,8 @@ dados <- dados_raw |>
   mutate(
     timestamp = as.POSIXct(horario_embarque),
     hora      = hour(timestamp),
+    # Garante tipo compatível com mapa_consorcio$linha (character)
+    linha     = as.character(linha),
     faixa     = case_when(
       hora < FAIXAS_HORARIAS$madrugada[2]  ~ "madrugada",
       hora < FAIXAS_HORARIAS$pico_manha[2] ~ "pico_manha",
@@ -87,13 +92,12 @@ total_partidas  <- n_distinct(dados$id_viagem)
 emb_por_faixa_rede <- dados |>
   count(faixa, name = "embarques") |>
   mutate(faixa = as.character(faixa)) |>
-  complete(faixa = faixas_todas, fill = list(embarques = 0L))
+  complete(faixa = faixas_todas, fill = list(embarques = 0L)) |>
+  mutate(label = LABELS_FAIXAS[faixa])
 
 emb_por_tipo <- dados |>
   count(tipo_usuario, name = "embarques") |>
   arrange(desc(embarques))
-
-fmt_num <- function(x) format(x, big.mark = ".", decimal.mark = ",", scientific = FALSE)
 
 linhas_faixa <- emb_por_faixa_rede |>
   mutate(label = LABELS_FAIXAS[faixa]) |>
@@ -274,8 +278,8 @@ if (file.exists(caminho_rds_semana_ant)) {
 }
 
 # 4b. Taxa de ocupação média (embarques / capacidade instalada)
-# Carregar capacidade média por tecnologia do CSV (script roda a partir de automacao_telegram/)
-capacidade_path <- "capacidade_tecnologia.csv"
+# Carregar capacidade média por tecnologia do CSV (script roda a partir da raiz do projeto)
+capacidade_path <- file.path("automacao_telegram", "capacidade_tecnologia.csv")
 if (file.exists(capacidade_path)) {
   cap_tecnologia <- readr::read_csv(capacidade_path, show_col_types = FALSE, lazy = FALSE)
   # Capacidade média ponderada (usando capacidade_media como padrão)
@@ -293,6 +297,21 @@ if (file.exists(capacidade_path)) {
 # Obter total de linhas únicas no GTFS/cadastro se disponível, senão usar total_linhas
 linhas_sem_partida <- total_linhas - n_distinct(dados$linha)
 linhas_sem_partida_fmt <- ifelse(linhas_sem_partida > 0, glue("{linhas_sem_partida} linhas"), "Nenhuma")
+
+# -----------------------------------------------------------------------------
+# Calcular viagens e headway (necessário para métricas 4d, 4e, 4f)
+# -----------------------------------------------------------------------------
+viagens <- dados |>
+  group_by(linha, sentido, id_viagem) |>
+  summarise(
+    inicio_viagem = min(timestamp),
+    faixa_viagem  = as.character(first(faixa)),
+    .groups       = "drop"
+  ) |>
+  arrange(linha, sentido, inicio_viagem) |>
+  group_by(linha, sentido) |>
+  mutate(headway_min = as.numeric(difftime(inicio_viagem, lag(inicio_viagem), units = "mins"))) |>
+  ungroup()
 
 # 4d. % de linhas com headway > 30 min nas faixas de pico
 # Reutilizar headway_faixa do PDF (mas calcular aqui para rede)
@@ -338,7 +357,9 @@ if (nrow(headway_por_hora) > 0) {
     headway_por_hora$char <- spark_chars[1]
   }
   sparkline_texto <- paste0(headway_por_hora$char, collapse = "")
-  sparkline_legenda <- glue("  {min(headway_por_hora$hora)}h {spark_chars[1]} = {hw_min:.1f}min  →  {max(headway_por_hora$hora)}h {spark_chars[8]} = {hw_max:.1f}min")
+  hw_min_fmt <- fmt_num(hw_min)
+  hw_max_fmt <- fmt_num(hw_max)
+  sparkline_legenda <- glue("  {min(headway_por_hora$hora)}h {spark_chars[1]} = {hw_min_fmt}min  →  {max(headway_por_hora$hora)}h {spark_chars[8]} = {hw_max_fmt}min")
 } else {
   sparkline_texto <- "—"
   sparkline_legenda <- ""
@@ -401,8 +422,17 @@ mensagem_kpis_bloco1 <- glue(
 )
 
 # -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # 2i. Montar mensagem KPI — BLOCO 2: Detalhamento Operacional
 # -----------------------------------------------------------------------------
+
+# Variáveis para bloco 2
+headway_alerta_txt <- ifelse(headway_alerta_linhas > 0,
+  glue("{headway_alerta_linhas} linha(s) com headway > 30min ({pct_linhas_headway_alto}%)"),
+  "Nenhuma"
+)
+
+linhas_sem_partida_txt <- linhas_sem_partida_fmt
 
 mensagem_kpis_bloco2 <- glue(
   "📊 *Detalhamento Operacional — {data_ref_fmt}*\n",
@@ -457,18 +487,7 @@ for (col in paste0("emb_", faixas_todas)) {
   if (!col %in% names(emb_faixa)) emb_faixa[[col]] <- 0L
 }
 
-# 3b. Viagens e headway
-viagens <- dados |>
-  group_by(linha, sentido, id_viagem) |>
-  summarise(
-    inicio_viagem = min(timestamp),
-    faixa_viagem  = as.character(first(faixa)),
-    .groups       = "drop"
-  ) |>
-  arrange(linha, sentido, inicio_viagem) |>
-  group_by(linha, sentido) |>
-  mutate(headway_min = as.numeric(difftime(inicio_viagem, lag(inicio_viagem), units = "mins"))) |>
-  ungroup()
+# 3b. Viagens e headway - viagens já calculado acima (linha ~304)
 
 partidas_total <- viagens |>
   group_by(linha, sentido) |>
