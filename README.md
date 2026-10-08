@@ -4,7 +4,7 @@ Este projeto automatiza o pipeline de análise de dados de embarques de ônibus 
 
 ## 📋 Visão Geral
 
-O pipeline realiza a extração de dados georreferenciados (bilhetagem JAE, RioCard e GPS SPPO), calcula indicadores de desempenho (KPIs) e gera um relatório tabular detalhado por linha e rota, entregando tudo de forma automática para os tomadores de decisão.
+O pipeline realiza a extração de dados georreferenciados (bilhetagem JAE, RioCard, GPS Ônibus e viagens inferidas), calcula indicadores de desempenho (KPIs) e gera um relatório tabular detalhado por linha e rota, entregando tudo de forma automática para os tomadores de decisão.
 
 ### 🚀 Fluxo de Trabalho
 
@@ -35,6 +35,16 @@ O pipeline realiza a extração de dados georreferenciados (bilhetagem JAE, RioC
 *   `SETUP_SCHEDULER_WIN.md`: Guia de configuração do agendador Windows.
 *   `requirements.txt`: Lista de pacotes R necessários.
 *   `output/`: Pasta contendo os relatórios gerados.
+
+## 🗄️ Fontes de Dados (BigQuery)
+
+| Tabela | Descrição |
+|--------|-----------|
+| `rj-smtr.br_rj_riodejaneiro_bilhetagem.transacao` | Bilhetagem JAE (tipo de transação) |
+| `rj-smtr.bilhetagem.transacao_riocard` | Bilhetagem RioCard |
+| `rj-smtr.monitoramento.gps_validador` | Mapeamento validador ↔ veículo |
+| `rj-smtr.monitoramento.gps_onibus_sppo` | **GPS dos ônibus SPPO** (substitui `br_rj_riodejaneiro_veiculos.gps_sppo`) |
+| `rj-smtr.monitoramento_interno.viagem_inferida` | **Viagens inferidas** (substitui `projeto_subsidio_sppo.viagem_completa`) |
 
 ## 🛠️ Requisitos e Instalação
 

@@ -319,7 +319,10 @@ headway_alerta_linhas <- viagens |>
   filter(faixa_viagem %in% FAIXAS_HEADWAY) |>
   group_by(linha, sentido) |>
   summarise(
-    headway_max = max(headway_min, na.rm = TRUE),
+    headway_max = {
+      vals <- headway_min[!is.na(headway_min)]
+      if (length(vals) > 0) max(vals) else NA_real_
+    },
     .groups = "drop"
   ) |>
   filter(!is.na(headway_max) & headway_max > 30) |>
@@ -633,5 +636,6 @@ tabela_gt <- tabela_rede |>
   )
 
 # Renderização do PDF em formato Paisagem amplo (vwidth=1700) para eliminar qualquer corte
-gtsave(tabela_gt, caminho_pdf, zoom = 0.8, vwidth = 1700, vheight = 1100)
+# Aumentar timeout do chromote para tabelas grandes
+gtsave(tabela_gt, caminho_pdf, zoom = 0.8, vwidth = 1700, vheight = 1100, expand = 10)
 message(glue("✅ PDF gerado: {caminho_pdf}"))

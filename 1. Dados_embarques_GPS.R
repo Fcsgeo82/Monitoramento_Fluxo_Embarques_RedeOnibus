@@ -58,8 +58,8 @@ processar_dia <- function(data, max_tentativas = 3, delay_segundos = 5) {
       q_rio   <- glue("SELECT datetime_transacao, id_validador FROM `rj-smtr.bilhetagem.transacao_riocard` WHERE data = '{data}'")
       
       q_track <- glue("SELECT DISTINCT(id_validador), id_veiculo FROM `rj-smtr.monitoramento.gps_validador` WHERE modo = 'Ônibus' AND data = '{data}'")
-      q_gps   <- glue("SELECT id_veiculo, latitude, longitude, timestamp_gps FROM `rj-smtr.br_rj_riodejaneiro_veiculos.gps_sppo` WHERE data = '{data}'")
-      q_trip  <- glue("SELECT servico_informado, sentido, datetime_partida, datetime_chegada, id_veiculo, id_viagem FROM `rj-smtr.projeto_subsidio_sppo.viagem_completa` WHERE data = '{data}'")
+      q_gps   <- glue("SELECT id_veiculo, servico, latitude, longitude, datetime_gps FROM `rj-smtr.monitoramento.gps_onibus_sppo` WHERE data = '{data}'")
+      q_trip  <- glue("SELECT servico, sentido, datetime_partida, datetime_chegada, id_veiculo, id_viagem FROM `rj-smtr.monitoramento_interno.viagem_inferida` WHERE data = '{data}'")
       
       # 2. Leitura de Dados
       registros_jae <- basedosdados::read_sql(q_jae)
@@ -70,7 +70,8 @@ processar_dia <- function(data, max_tentativas = 3, delay_segundos = 5) {
         group_by(id_validador) %>% filter(n() == 1) %>% ungroup()
       
       gps <- basedosdados::read_sql(q_gps) %>%
-        rename(data_hora = timestamp_gps) %>%
+        rename(data_hora = datetime_gps,
+               linha = servico) %>%
         mutate(
           id_veiculo = substr(id_veiculo, 2, 6),
           data_hora = as.POSIXct(data_hora)
@@ -78,9 +79,20 @@ processar_dia <- function(data, max_tentativas = 3, delay_segundos = 5) {
         as.data.table()
       
       trip <- basedosdados::read_sql(q_trip) %>%
-        mutate(id_veiculo = substr(id_veiculo, 2, 6)) %>%
+        mutate(
+          id_veiculo = substr(id_veiculo, 2, 6),
+          # Garantir que as datas estão como POSIXct
+          datetime_partida = as.POSIXct(datetime_partida),
+          datetime_chegada = as.POSIXct(datetime_chegada)
+        ) %>%
         group_by(id_veiculo) %>% arrange(datetime_partida) %>%
-        mutate(datetime_partida_adj = if_else(!is.na(lag(datetime_chegada)), lag(datetime_chegada), datetime_partida - 1800)) %>%
+        mutate(
+          # Usar case_when (mais flexível com tipos) ou garantir tipos compatíveis
+          datetime_partida_adj = case_when(
+            !is.na(lag(datetime_chegada)) ~ lag(datetime_chegada),
+            TRUE ~ datetime_partida - 1800
+          )
+        ) %>%
         ungroup()
       
       # 3. Consolidação da Bilhetagem
@@ -122,7 +134,7 @@ processar_dia <- function(data, max_tentativas = 3, delay_segundos = 5) {
         filter(horario_embarque > datetime_partida_adj & horario_embarque <= datetime_chegada) %>%
         select(
           id_veiculo,
-          linha = servico_informado,
+          linha = servico,
           sentido,
           tipo_usuario,
           horario_embarque,
