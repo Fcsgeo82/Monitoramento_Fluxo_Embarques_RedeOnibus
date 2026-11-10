@@ -1,0 +1,19 @@
+# Arquivos temporários e de sessão do R
+.RData
+.RDataTmp*
+.Rhistory
+.Rproj.user/
+.Renviron
+
+# Credenciais e segredos (NUNCA versionar)
+*.json
+!hooks.json
+*secret*
+*credential*
+
+# Dados pesados e saídas geradas localmente
+*.rds
+*.zip
+automacao_telegram/output/*.pdf
+automacao_telegram/output/*.png
+

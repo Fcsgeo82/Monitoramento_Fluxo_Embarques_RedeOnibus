@@ -1,6 +1,6 @@
 # Contexto do Projeto — Automação de Relatório Diário via Telegram
 
-*Última atualização: 06/08/2026*
+*Última atualização: 05/11/2026*
 
 ---
 
@@ -15,7 +15,8 @@ Pipeline de automação que transforma dois scripts R de análise de embarques d
 | Arquivo | O que faz |
 |---------|-----------|
 | `1. Dados_embarques_GPS.R` | Consulta BigQuery (bilhetagem JAE + RioCard + **GPS Ônibus SPPO** + **viagens inferidas**), cruza as fontes e salva `.rds` com todos os embarques georeferenciados do dia |
-| `2.1. Mapa_fluxo_embarques_v2.R` | App Shiny interativo que consome o `.rds` + GTFS e exibe mapas, animações, headway e tabela de viagens |
+| `1.2 Dados_embarques_GPS_Linha.R` | Extração filtrada por linha(s) específica(s) (`LINHAS_SELECIONADAS`, modos `"exato"` ou `"contem"`), consultando `viagem_valida` e `view_gps_sppo_completo` |
+| `2.1. Mapa_fluxo_embarques_v2.R` | App Shiny interativo (upload até 5 GB, mapas OpenStreetMap/Esri sem API Key, suporte a múltiplas variantes de itinerário via `st_union`) que consome o `.rds` + GTFS e exibe mapas, animações, headway e tabela de viagens |
 
 O `.rds` gerado pelo Script 1 tem as colunas: `id_veiculo`, `linha`, `sentido`, `tipo_usuario`, `horario_embarque`, `latitude`, `longitude`, `id_viagem`.
 
